@@ -1,14 +1,13 @@
-#fetchDataScript.py
-#parsing the file formats
-from Bio import SeqIO
+from Bio import Entrez, SeqIO
 
-#fetch content from the file formats - FASTA and genbank
-for seq_record in SeqIO.parse("ls_orchid.fasta","fasta"):
-    print(seq_record.id) 
-    print(repr(seq_record.seq))
-    print(len(seq_record))
+# Tell NCBI who you are (required by their policy)
+Entrez.email = ""
 
-for seq_record in SeqIO.parse("ls_orchid.gbk","genbank"):
-    print(seq_record.id) 
-    print(repr(seq_record.seq))
-    print(len(seq_record))
+# Fetch the human Insulin gene from GenBank programmatically
+handle = Entrez.efetch(db="nucleotide", id="NM_000618", rettype="fasta", retmode="text")
+record = SeqIO.read(handle, "fasta")
+handle.close()
+
+print(f"Successfully fetched: {record.description}")
+print(f"Sequence Length: {len(record.seq)} base pairs")
+print(f"First 50 letters: {record.seq[:50]}")
